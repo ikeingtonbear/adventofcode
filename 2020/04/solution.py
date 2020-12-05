@@ -170,13 +170,13 @@ def part1(passports):
 
 def part2(passports):
     valid_passports = 0
-    byr_re = re.compile(".*byr:(\d{4}).*")
-    iyr_re = re.compile(".*iyr:(\d{4}).*")
-    eyr_re = re.compile(".*eyr:(\d{4}).*")
-    hgt_re = re.compile(".*hgt:(\d{2,3})(cm|in).*")
-    hcl_re = re.compile(".*hcl:(#[a-f0-9]{6}).*")
-    ecl_re = re.compile(".*ecl:(amb|blu|brn|gry|grn|hzl|oth).*")
-    pid_re = re.compile(".*pid:(\d{9}).*")
+    byr_re = re.compile(".*byr:(\d{4})(\s.*|$)")
+    iyr_re = re.compile(".*iyr:(\d{4})(\s.*|$)")
+    eyr_re = re.compile(".*eyr:(\d{4})(\s.*|$)")
+    hgt_re = re.compile(".*hgt:(\d{2,3})(cm|in)(\s.*|$)")
+    hcl_re = re.compile(".*hcl:(#[a-f0-9]{6})(\s.*|$)")
+    ecl_re = re.compile(".*ecl:(amb|blu|brn|gry|grn|hzl|oth)(\s.*|$)")
+    pid_re = re.compile(".*pid:(\d{9})(\s.*|$)")
     for passport in passports:
         if validatePassport(passport):
             if pid_re.match(passport):
