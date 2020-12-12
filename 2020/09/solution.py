@@ -112,7 +112,6 @@ from itertools import combinations, islice
 def readInput():
     with open('input.txt', 'r') as f:
         xmas_data = [int(i) for i in f.read().strip().split('\n')]
-        xmas_data.sort
     return xmas_data
 
 
@@ -134,21 +133,22 @@ def part1(xmas_data):
 
 def part2(xmas_data, invalid_num):
     sum = 0
-    for i in range(len(xmas_data)):
-        count = 0
-        slice_len = len(xmas_data) - i
-
-        while (count + slice_len) <= len(xmas_data):
-            my_slice = list(islice(xmas_data, count, count + slice_len))
-            if reduce(lambda x, y: x + y, my_slice) == invalid_num:
-                sum = my_slice[0] + my_slice[-1]
-            if sum != 0:
+    exit = False
+    sequence = list(filter(lambda x: x if x < invalid_num else None,
+                    xmas_data))
+    for i in reversed(range(len(sequence))):
+        for j in range(i):
+            new_sequence = sequence[j:i]
+            total = reduce(lambda x, y: x + y, new_sequence)
+            if total == invalid_num:
+                new_sequence.sort()
+                sum = new_sequence[0] + new_sequence[-1]
+                exit = True
+            if exit:
                 break
-            count += 1
-        if sum != 0:
+        if exit:
             break
-
-    print("Part 2: Sum = {}".format(sum))
+    print("Part 2: Weakness = {}".format(sum))
 
 
 def main():
