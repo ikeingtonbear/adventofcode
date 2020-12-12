@@ -133,8 +133,14 @@ def readInput():
     return instructions
 
 
-def reset(instructions):
-    return [i.update({"executed": 0}) for i in instructions]
+def reset(instructions, idx):
+    [i.update({"executed": 0}) for i in instructions]
+    if idx != -1:
+        if instructions[idx].get("operation") == "jmp":
+            instructions[idx].update({"operation": "nop"})
+        elif instructions[idx].get("operation") == "nop":
+            instructions[idx].update({"operation": "jmp"})
+    return instructions
 
 
 def part1(instructions):
@@ -158,8 +164,28 @@ def part1(instructions):
 
 
 def part2(instructions):
+
+    def run(instruction_set):
+        counter = 0
+        accumulator = 0
+        while True:
+            if counter == len(instruction_set):
+                return False, accumulator
+            if instruction_set[counter].get("executed") == 1:
+                return True, accumulator
+            instruction_set[counter].update({"executed": 1})
+            if instruction_set[counter].get("operation") == "jmp":
+                argument = instruction_set[counter].get("argument")
+                counter += argument
+            elif instruction_set[counter].get("operation") == "acc":
+                argument = instruction_set[counter].get("argument")
+                accumulator += argument
+                counter += 1
+            else:
+                counter += 1
+
     for i in range(len(instructions)):
-        reset(instructions)
+        reset(instructions, i - 1)
         if instructions[i].get("operation") == "jmp":
             instructions[i].update({"operation": "nop"})
         elif instructions[i].get("operation") == "nop":
@@ -167,28 +193,9 @@ def part2(instructions):
         else:
             continue
 
-        counter = 0
-        accumulator = 0
-        loop = False
-
-        while counter < len(instructions):
-            if instructions[counter].get("executed") == 1:
-                loop = True
-                break
-            instructions[counter].update({"executed": 1})
-            if instructions[counter].get("operation") == "jmp":
-                argument = instructions[counter].get("argument")
-                counter += argument
-            elif instructions[counter].get("operation") == "acc":
-                argument = instructions[counter].get("argument")
-                accumulator += argument
-                counter += 1
-            else:
-                counter += 1
-
-        if counter == len(instructions) and loop is False:
-            print("Part 2: accumulator = {}".format(accumulator))
-            print(i, counter)
+        loop, accum_val = run(instructions)
+        if not loop:
+            print("Part 2: accumulator = {}".format(accum_val))
 
 
 def main():
